@@ -12,7 +12,7 @@ def route_flow_in_top(top):
     for flow in top.flows:
         if not flow.route_state:
             top.flows_cant_be_routed.append(flow)
-            top.flows.remove(flow)
+            # top.flows.remove(flow)
 
 
 def gen_slices(net_top, num_slice=3):
@@ -35,9 +35,9 @@ class Test:
         res = {}
         self.main_top.generate_flows(self.num_flow, max_flow_size=self.max_flow_size)
         route_flow_in_top(self.main_top)
-        res['route succeed'] = len(self.main_top.flows)
+        res['route succeed'] = len(self.main_top.flows) - len(self.main_top.flows_cant_be_routed)
         res['route failed'] = len(self.main_top.flows_cant_be_routed)
-        self.main_top.flows = self.main_top.flows + self.main_top.flows_cant_be_routed
+        # self.main_top.flows = self.main_top.flows + self.main_top.flows_cant_be_routed
         self.main_top.flows_cant_be_routed.clear()
         for flow in self.main_top.flows:
             flow.disconnect_flow()
@@ -47,11 +47,12 @@ class Test:
         res = {}
         flow_clustering(self.main_top)
         trans_flow(self.main_top, self.slices)
+        self.main_top.flows.clear()
         for i, _ in enumerate(self.slices):
-            res['slice'+str(i)] = {}
-            temp = res['slice'+str(i)]
+            res['slice' + str(i)] = {}
+            temp = res['slice' + str(i)]
             route_flow_in_top(self.slices[i])
-            temp['route succeed'] = len(self.slices[i].flows)
+            temp['route succeed'] = len(self.slices[i].flows) - len(self.slices[i].flows_cant_be_routed)
             temp['route failed'] = len(self.slices[i].flows_cant_be_routed)
         for i, _ in enumerate(self.slices):
             for flow_r in self.slices[i].flows:
@@ -59,22 +60,42 @@ class Test:
                 flow_r.set_top(self.main_top)
                 self.main_top.flows.append(flow_r)
             self.slices[i].flows.clear()
-            for flow_c_r in self.slices[i].flows_cant_be_routed:
-                flow_r.set_top(self.main_top)
-                self.main_top.flows.append(flow_r)
-            self.slices[i].flows_cant_be_routed.clear
+            # for flow_c_r in self.slices[i].flows_cant_be_routed:
+            #     flow_r.set_top(self.main_top)
+            #     self.main_top.flows.append(flow_r)
+            self.slices[i].flows_cant_be_routed.clear()
         return res
 
     def _part_3(self):
         random.shuffle(self.main_top.flows)
         slices = self.slices
-        for flow in self.main_top.flows:
+        for flow in tqdm(self.main_top.flows, desc='part3'):
             assert flow.route_state is False
             flow.set_top(slices[flow.classification])
             slices[flow.classification].flows.append(flow)
+            flow.route_flow(weight='delay')
+            if flow.route_state:
+                path = flow._sp_paths[0]
+                for (a, b) in path:
+                    self._scheduling_bandwidth(a, b, flow.demand, flow.classification)
+            else:
+                slices[flow.classification].flows_cant_be_routed.append(flow)
+        res = {}
+        for i, _ in enumerate(self.slices):
+            res['slice' + str(i)] = {}
+            temp = res['slice' + str(i)]
+            temp['route succeed'] = len(self.slices[i].flows) - len(self.slices[i].flows_cant_be_routed)
+            temp['route failed'] = len(self.slices[i].flows_cant_be_routed)
+        return res
+
+    def _scheduling_bandwidth(self, a, b, flow_demand, slice_num):
+        differ_slice_num = [(1, 2), (0, 2), (0, 1)]  # 只适用三个切片，多了需要改，有空改成通用
+        for i in differ_slice_num[slice_num]:
+            if self.slices[i].graph[a][b]['bandwidth'] > (2 * self.max_flow_size):
+                self.slices[slice_num].graph[a][b]['bandwidth'] += flow_demand
+                self.slices[i].graph[a][b]['bandwidth'] -= flow_demand
 
     def run(self):
         print(self._part_1())
         print(self._part_2())
-
-
+        print(self._part_3())
