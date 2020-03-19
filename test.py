@@ -95,7 +95,20 @@ class Test:
                 self.slices[slice_num].graph[a][b]['bandwidth'] += flow_demand
                 self.slices[i].graph[a][b]['bandwidth'] -= flow_demand
 
+    def _gen_flow_data(self):
+        flow_data = {}
+        for flow in self.main_top.flows:
+            flow_data['flow' + str(flow.num_of_the_flow)] = {}
+            temp = flow_data['flow' + str(flow.num_of_the_flow)]
+            temp['class'] = flow.classification
+            temp['source'] = flow.source
+            temp['destination'] = flow.destination
+            temp['demand'] = flow.demand
+        return flow_data
+
     def run(self):
-        print(self._part_1())
-        print(self._part_2())
-        print(self._part_3())
+        self.data = {'part 1': self._part_1(), 'part 2': self._part_2(), 'flow data': self._gen_flow_data(),
+                     'part 3': self._part_3()}
+
+    def data(self):
+        return self.data
