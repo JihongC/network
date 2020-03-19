@@ -15,9 +15,9 @@ def _helper_gen_ring_num(node_class, igp_num, ring_num, num_core, num_converge, 
 
 
 def flow_clustering(net_top):
-    num_core = net_top._num_core
-    num_converge = net_top._num_converge
-    num_access = net_top._num_access
+    # num_core = net_top._num_core
+    # num_converge = net_top._num_converge
+    # num_access = net_top._num_access
     node = net_top.graph.nodes
     data = np.empty([len(net_top.flows), 4])
     for i, flow in enumerate(net_top.flows):

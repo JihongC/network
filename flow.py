@@ -43,6 +43,10 @@ class Flow:
                 # print('没有最短路径')
                 self._num_paths = 0
                 self.route_state = False
+                for a, b, attrs in temp_band:
+                    toploggy.add_edge(a, b)
+                    for k, v in attrs.items():
+                        toploggy[a][b][k] = v
                 return
             unable_trans = self._reduce_band_in_top(toploggy, temp_sp)
         for a, b, attrs in temp_band:
