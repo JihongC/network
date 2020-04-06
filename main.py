@@ -1,11 +1,11 @@
 import argparse
 import os
-import multiprocessing
 
 import json
 
 from net_toploggy import NetTop
-from test import gen_slices, Test, test_part_1, test_part_2, test_part_3
+from test import gen_slices, Test
+from concurrent_test import test_part_1, test_part_2, test_part_3
 
 
 def get_parser():
@@ -14,11 +14,28 @@ def get_parser():
     return parser
 
 
+# def parallel_average_test(num_of_test):
+#     flow_samples = (x for x in range(100, 300, 100))
+#     for flow_num in flow_samples:
+#         net = NetTop()
+#         slices = gen_slices(net)
+#         data = {'part1': test_part_1(net, flow_num, 1), 'part2': test_part_2(net, slices),
+#                 'part3': test_part_3(net, slices)}
+#         data_json = json.dumps(data)
+#         work_dir = os.getcwd() + '/data/test' + str(num_of_test)
+#         file = str(flow_num) + '_flows.json'
+#         if not os.path.exists(work_dir):
+#             os.makedirs(work_dir)
+#         with open(work_dir + '/' + file, 'w') as json_file:
+#             json_file.write(data_json)
+#     return str(num_of_test) + 'compelete!'
+
+
 if __name__ == '__main__':
     parser = get_parser()
     args = vars(parser.parse_args())
 
-    flow_samples = (x for x in range(1000, 8000, 100))
+    flow_samples = (x for x in range(500, 700, 100))
 
     # for x in flow_samples:
     #     net = NetTop()
@@ -33,9 +50,16 @@ if __name__ == '__main__':
     #         os.makedirs(work_dir)
     #     with open(work_dir + '/' + file, 'w') as json_file:
     #         json_file.write(data_json)
-    net = NetTop()
-    slices = gen_slices(net)
-    test_part_1(net, 300, 1)
-    test_part_2(net, slices)
-    test_part_3(net, slices)
+    for flow_num in flow_samples:
+        net = NetTop()
+        slices = gen_slices(net)
+        data = {'part1': test_part_1(net, flow_num, 1), 'part2': test_part_2(net, slices),
+                'part3': test_part_3(net, slices)}
+        data_json = json.dumps(data)
+        work_dir = os.getcwd() + '/data/test' + str(args['num_of_tests'])
+        file = str(flow_num) + '_flows.json'
+        if not os.path.exists(work_dir):
+            os.makedirs(work_dir)
+        with open(work_dir + '/' + file, 'w') as json_file:
+            json_file.write(data_json)
     exit()
