@@ -84,6 +84,7 @@ def _helper_test_part_3(slice, num_of_slice, queue_get, queue_out1, queue_out2, 
             if operation[0] == 'band_permission':
                 _helper_op_recv_band_permission(slice, operation)
             else:
+                assert operation[0] == 'band_request'
                 op_request_recv.append(operation)
         assert flow._belong_toploggy == slice.graph
         flow.route_flow(weight='delay')
@@ -106,12 +107,12 @@ def _helper_test_part_3(slice, num_of_slice, queue_get, queue_out1, queue_out2, 
 
 
 def test_part_3(test_top, test_slices):
-    queue1 = Queue()
-    queue2 = Queue()
-    queue3 = Queue()
     result_return = {}
     with Manager() as manager:
         result = manager.dict()
+        queue1 = manager.Queue()
+        queue2 = manager.Queue()
+        queue3 = manager.Queue()
         p1 = Process(target=_helper_test_part_3, args=(test_slices[0], 0, queue1, queue2, queue3, result,))
         p2 = Process(target=_helper_test_part_3, args=(test_slices[1], 1, queue2, queue1, queue3, result,))
         p3 = Process(target=_helper_test_part_3, args=(test_slices[2], 2, queue3, queue1, queue2, result,))

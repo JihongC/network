@@ -35,7 +35,7 @@ if __name__ == '__main__':
     parser = get_parser()
     args = vars(parser.parse_args())
 
-    flow_samples = (x for x in range(500, 700, 100))
+    flow_samples = (x for x in range(500, 10000, 100))
 
     # for x in flow_samples:
     #     net = NetTop()
