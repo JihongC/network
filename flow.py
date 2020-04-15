@@ -20,6 +20,10 @@ class Flow:
     #     self._num_paths += 1
 
     def route_flow(self, weight='weight'):
+        """
+        在flow所属的拓扑中路由
+        :param weight: 搜寻路径的权重参数
+        """
         toploggy = self._belong_toploggy
         self._sp_nodes.clear()
         self._num_paths = 0
@@ -59,6 +63,9 @@ class Flow:
         self._gen_path()
 
     def disconnect_flow(self):
+        """
+        断开流，返回经过的路径所占用的带宽
+        """
         if not self.route_state:
             return
         self.route_state = False

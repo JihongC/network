@@ -8,6 +8,9 @@ from flow_clustering import flow_clustering, trans_flow
 
 
 def test_part_1(test_top, num_of_flow, max_flow_size):
+    """
+    在为切片的主拓扑中route
+    """
     test_top.generate_flows(num_of_flow, max_flow_size)
     start_time = datetime.datetime.now()
     route_flow_in_top(test_top)
@@ -30,6 +33,9 @@ def _helper_part_2(slice, num_of_slice, manager):
 
 
 def test_part_2(test_top, test_slices):
+    """
+    在静态均匀分片的三个切片中路由对应的流
+    """
     flow_clustering(test_top)
     trans_flow(test_top, test_slices)
     jobs = []
@@ -107,6 +113,9 @@ def _helper_test_part_3(slice, num_of_slice, queue_get, queue_out1, queue_out2, 
 
 
 def test_part_3(test_top, test_slices):
+    """
+    动态资源调整分片对应流的route
+    """
     result_return = {}
     with Manager() as manager:
         result = manager.dict()

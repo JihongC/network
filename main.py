@@ -1,5 +1,6 @@
 import argparse
 import os
+from concurrent.futures import ProcessPoolExecutor
 
 import json
 
@@ -37,6 +38,11 @@ if __name__ == '__main__':
 
     flow_samples = (x for x in range(500, 10000, 100))
 
+    # with ProcessPoolExecutor(4) as executor:
+    #     jobs = []
+    #     for i in range(4):
+    #         jobs.append(executor.submit(parallel_average_test, i))
+
     # for x in flow_samples:
     #     net = NetTop()
     #     slices = gen_slices(net)
@@ -50,6 +56,7 @@ if __name__ == '__main__':
     #         os.makedirs(work_dir)
     #     with open(work_dir + '/' + file, 'w') as json_file:
     #         json_file.write(data_json)
+
     for flow_num in flow_samples:
         net = NetTop()
         slices = gen_slices(net)

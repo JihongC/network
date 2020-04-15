@@ -21,6 +21,9 @@ class NetTop:
         self.built_top()
 
     def built_top(self):
+        """
+        构建主拓扑的结构
+        """
         # 构建网络拓扑
         node_count = 0  # node序列计数
         for num_core in tqdm(range(self._num_core),desc='Building main Toploggy'):
@@ -60,6 +63,9 @@ class NetTop:
         self._set_node_attr_()
 
     def _set_node_attr_(self):
+        """
+        设置节点属性
+        """
         node_class = (
             'Metro Core', 'Backbone Convergence', 'Ordinary Convergence', 'Access Convergence', 'Access')
         for n, nbrs in self.graph.adjacency():
@@ -95,6 +101,9 @@ class NetTop:
                 self.graph.nodes[n]['ring_num'] = self.graph.nodes[n]['IGP_num']
 
     def generate_flows(self, flow_num, max_flow_size=1, clear=True):
+        """
+        生成流，存储在flows属性中
+        """
         if clear:
             self.flows.clear()
             self.flows_cant_be_routed.clear()
@@ -112,6 +121,9 @@ class NetTop:
                 Flow(num_flow, s, d, float(np.random.uniform(max_flow_size/2, max_flow_size)), self.graph))
 
     def _helper_vail_s_d(self, s, d):
+        """
+        检查源节点和目标节点是否符合条件
+        """
         s = self.graph.nodes[s]
         d = self.graph.nodes[d]
         if d['layer'] == 'core layer' or d['layer'] == 'metro cross':

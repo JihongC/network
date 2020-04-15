@@ -50,6 +50,9 @@ def random_classification(net_top, slices):
 
 
 def trans_flow(net_top, slice):
+    """
+    将分类后的流从主拓扑类的flows属性中转移到对应的切片的flows中
+    """
     for flow in net_top.flows:
         flow.set_top(slice[flow.classification])
         slice[flow.classification].flows.append(flow)

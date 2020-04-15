@@ -15,5 +15,8 @@ class Slice:
         cls._num_slice = n
 
     def set_band(self):
+        """
+        初始化均匀分配切片带宽
+        """
         for a, b in self.graph.edges:
             self.graph[a][b]['bandwidth'] /= Slice._num_slice
