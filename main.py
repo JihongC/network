@@ -6,7 +6,7 @@ import json
 
 from net_toploggy import NetTop
 from test import gen_slices, Test
-from concurrent_test import test_part_1, test_part_2, test_part_3
+from concurrent_test import test_part_1, test_part_2, test_part_3, test_part_3_cycle, test_part_4
 
 
 def get_parser():
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser = get_parser()
     args = vars(parser.parse_args())
 
-    flow_samples = (x for x in range(500, 10000, 100))
+    flow_samples = (x for x in range(500, 10000, 200))
 
     # with ProcessPoolExecutor(4) as executor:
     #     jobs = []
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         net = NetTop()
         slices = gen_slices(net)
         data = {'part1': test_part_1(net, flow_num, 1), 'part2': test_part_2(net, slices),
-                'part3': test_part_3(net, slices)}
+                'part3': test_part_3_cycle(net, slices), 'part4': test_part_4(net,slices)}
         data_json = json.dumps(data)
         work_dir = os.getcwd() + '/data/test' + str(args['num_of_tests'])
         file = str(flow_num) + '_flows.json'
