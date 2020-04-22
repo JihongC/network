@@ -165,7 +165,7 @@ def _helper_test_part_3_cycle(slice, num_of_slice, queue_get, queue_out1, queue_
     op_send_list_q2 = []
     operation_count = 1
     start_time = datetime.datetime.now()
-    for flow in tqdm(slice.flows, desc='cycle-'+str(cycle)+'-routing'):
+    for flow in tqdm(slice.flows, desc='cycle-' + str(cycle) + '-routing'):
         op_request_recv = []
         while not queue_get.empty():
             operation = queue_get.get()
@@ -238,3 +238,6 @@ def test_part_4(test_top, test_slices):
         result_return = dict(result)
     return result_return
 
+
+def test_part_5(test_top, test_slices):
+    return test_part_3_cycle(test_top, test_slices)
