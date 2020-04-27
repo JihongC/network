@@ -29,7 +29,7 @@ def _helper_part_2(slice, num_of_slice, manager):
     end_time = datetime.datetime.now()
     manager['slice' + str(num_of_slice) + ' route time'] = (end_time - start_time).total_seconds()
     manager['slice' + str(num_of_slice) + ' route success'] = len(slice.flows) - len(slice.flows_cant_be_routed)
-    manager['slice' + str(num_of_slice) + ' route failure'] = len(slice.flows_cant_be_routed)
+    manager['slice' + str(num_of_slice) + ' route failed'] = len(slice.flows_cant_be_routed)
 
 
 def test_part_2(test_top, test_slices):
@@ -240,4 +240,28 @@ def test_part_4(test_top, test_slices):
 
 
 def test_part_5(test_top, test_slices):
+    return test_part_3_cycle(test_top, test_slices)
+
+
+def test_part_6(test_top, test_slices):
+    count_0 = 0
+    count_1 = 0
+    count_2 = 0
+    flow_clustering(test_top)
+    for flow in test_top.flows:
+        if flow.classification == 0:
+            flow.classification = count_0 % 3
+            count_0 += 1
+        elif flow.classification == 1:
+            flow.classification = count_1 % 3
+            count_1 += 1
+        else:
+            flow.classification = count_2 % 3
+            count_2 += 1
+    for slice_num in test_slices:
+        for flow in test_slices[slice_num].flows:
+            flow.disconnect_flow()
+        test_slices[slice_num].flows.clear()
+        test_slices[slice_num].flows_cant_be_routed.clear()
+    trans_flow(test_top, test_slices)
     return test_part_3_cycle(test_top, test_slices)

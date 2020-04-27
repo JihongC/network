@@ -56,4 +56,7 @@ def trans_flow(net_top, slice):
     for flow in net_top.flows:
         flow.set_top(slice[flow.classification])
         slice[flow.classification].flows.append(flow)
+    for i in slice:
+        for flow in slice[i].flows:
+            assert flow.route_state == False
         # net_top.flows.remove(flow)
