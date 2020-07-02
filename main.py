@@ -4,7 +4,8 @@ import os
 
 from concurrent_test import test_part_1, test_part_2, test_part_3_cycle, test_part_4, test_part_5, test_part_6
 from net_toploggy import NetTop
-from test import gen_slices
+from test import gen_slices, route_flow_in_top
+from flow_clustering import random_classification
 
 
 def get_parser():
@@ -58,9 +59,20 @@ if __name__ == '__main__':
     for flow_num in flow_samples:
         net = NetTop()
         slices = gen_slices(net)
+        net.generate_flows(150)
+        random_classification(net, slices)
+        route_flow_in_top(net)
+        net.flows.clear()
+        net.flows_cant_be_routed.clear()
+        for i, s in slices.items():
+            for flow in s.flows:
+                flow.route_flow(weight='delay')
+        for i, s in slices.items():
+            s.flows.clear()
+            s.flows_cant_be_routed.clear()
         data = {'part1': test_part_1(net, flow_num, 1), 'part2': test_part_2(net, slices),
                 'part3': test_part_3_cycle(net, slices), 'part4': test_part_4(net, slices),
-                'part5': test_part_5(net, slices), 'part6': test_part_6(net,slices)}
+                'part5': test_part_5(net, slices), 'part6': test_part_6(net, slices)}
         data_json = json.dumps(data)
         work_dir = os.getcwd() + '/data/test' + str(args['num_of_tests'])
         file = str(flow_num) + '_flows.json'
